@@ -66,8 +66,8 @@ function ToggleButton({
         "h-12 px-4 rounded-xl border text-sm font-medium transition-all duration-150 active:scale-[0.97]",
         fullWidth && "flex-1",
         active
-          ? "bg-[var(--primary)] border-[var(--primary)] text-white shadow-sm"
-          : "bg-[var(--surface)] border-[var(--border)] text-[var(--text)] hover:border-gray-300"
+          ? "bg-[#3B82F6] border-[#3B82F6] text-white font-semibold"
+          : "bg-[#F3F4F6] border-transparent text-[#111827] hover:bg-[#E5E7EB]"
       )}
     >
       {label}
@@ -88,9 +88,9 @@ function Field({
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-sm font-semibold text-[var(--text)]">{label}</label>
+      <label className="text-[13px] font-semibold text-[#6B7280] uppercase tracking-wide">{label}</label>
       {children}
-      {hint && <p className="text-xs text-[var(--text-muted)]">{hint}</p>}
+      {hint && <p className="text-xs text-[#6B7280]">{hint}</p>}
     </div>
   );
 }
@@ -112,7 +112,7 @@ function Select({
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full h-12 px-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-sm text-[var(--text)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] appearance-none"
+      className="w-full h-[52px] px-4 rounded-2xl bg-[#F3F4F6] text-[15px] text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:bg-white transition-all border border-transparent appearance-none"
     >
       {placeholder && (
         <option value="" disabled>
@@ -150,10 +150,10 @@ function TextInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full h-12 px-4 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-sm text-[var(--text)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
+        className="w-full h-[52px] px-4 rounded-2xl bg-[#F3F4F6] text-[15px] text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:bg-white transition-all border border-transparent focus:border-[#3B82F6]"
       />
       {suffix && (
-        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-[var(--text-muted)]">
+        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-[#6B7280]">
           {suffix}
         </span>
       )}
@@ -173,11 +173,19 @@ function ContinueButton({
   label?: string;
 }) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-[var(--surface)] border-t border-[var(--border)] px-4 py-4 pb-safe">
+    <div
+      className="fixed bottom-0 left-0 right-0 px-5 py-4 pb-safe"
+      style={{
+        background: "rgba(255,255,255,0.88)",
+        backdropFilter: "blur(20px) saturate(180%)",
+        WebkitBackdropFilter: "blur(20px) saturate(180%)",
+        borderTop: "0.5px solid rgba(0,0,0,0.1)",
+      }}
+    >
       <button
         onClick={onClick}
         disabled={disabled}
-        className="w-full h-14 rounded-2xl bg-[var(--primary)] text-white text-base font-semibold hover:bg-blue-600 active:scale-[0.98] transition-all shadow-sm shadow-blue-200 disabled:opacity-40 disabled:cursor-not-allowed"
+        className="w-full h-[56px] rounded-2xl bg-[#111827] text-white text-[16px] font-semibold tracking-[-0.01em] active:scale-[0.98] transition-transform disabled:opacity-25 disabled:cursor-not-allowed"
       >
         {label}
       </button>
@@ -214,8 +222,8 @@ function Step2() {
   return (
     <div className="px-4 pt-6 pb-28 flex flex-col gap-6">
       <div>
-        <h2 className="text-2xl font-bold text-[var(--text)]">전화번호 인증</h2>
-        <p className="text-sm text-[var(--text-muted)] mt-1">
+        <h2 className="text-[28px] font-black text-[#111827] tracking-[-0.02em] leading-tight">전화번호 인증</h2>
+        <p className="text-sm text-[#6B7280] mt-1">
           본인 명의 전화번호로 인증해주세요
         </p>
       </div>
@@ -279,8 +287,8 @@ function Step3() {
   return (
     <div className="px-4 pt-6 pb-28 flex flex-col gap-6">
       <div>
-        <h2 className="text-2xl font-bold text-[var(--text)]">기본 정보</h2>
-        <p className="text-sm text-[var(--text-muted)] mt-1">이름과 성별을 알려주세요</p>
+        <h2 className="text-[28px] font-black text-[#111827] tracking-[-0.02em] leading-tight">기본 정보</h2>
+        <p className="text-sm text-[#6B7280] mt-1">이름과 성별을 알려주세요</p>
       </div>
 
       <Field label="이름">
@@ -324,8 +332,8 @@ function Step4() {
   return (
     <div className="px-4 pt-6 pb-28 flex flex-col gap-6">
       <div>
-        <h2 className="text-2xl font-bold text-[var(--text)]">외모 · 스펙</h2>
-        <p className="text-sm text-[var(--text-muted)] mt-1">상대방이 확인하는 기본 스펙이에요</p>
+        <h2 className="text-[28px] font-black text-[#111827] tracking-[-0.02em] leading-tight">외모 · 스펙</h2>
+        <p className="text-sm text-[#6B7280] mt-1">상대방이 확인하는 기본 스펙이에요</p>
       </div>
 
       <Field label="키">
@@ -395,8 +403,8 @@ function Step5() {
   return (
     <div className="px-4 pt-6 pb-28 flex flex-col gap-6">
       <div>
-        <h2 className="text-2xl font-bold text-[var(--text)]">라이프스타일</h2>
-        <p className="text-sm text-[var(--text-muted)] mt-1">나의 생활 방식을 알려주세요</p>
+        <h2 className="text-[28px] font-black text-[#111827] tracking-[-0.02em] leading-tight">라이프스타일</h2>
+        <p className="text-sm text-[#6B7280] mt-1">나의 생활 방식을 알려주세요</p>
       </div>
 
       <Field label="흡연">
@@ -430,7 +438,7 @@ function Step5() {
                 "h-9 px-3.5 rounded-full text-sm font-medium border transition-all active:scale-[0.97]",
                 hobbies.includes(h)
                   ? "bg-[var(--primary)] border-[var(--primary)] text-white"
-                  : "bg-[var(--surface)] border-[var(--border)] text-[var(--text)]"
+                  : "bg-[var(--surface)] border-[var(--border)] text-[#111827]"
               )}
             >
               {h}
@@ -449,7 +457,7 @@ function Step5() {
           <button
             type="button"
             onClick={addCustom}
-            className="h-10 px-4 rounded-xl bg-gray-100 text-sm font-medium text-[var(--text)] hover:bg-gray-200"
+            className="h-10 px-4 rounded-xl bg-gray-100 text-sm font-medium text-[#111827] hover:bg-gray-200"
           >
             추가
           </button>
@@ -499,8 +507,8 @@ function Step6() {
   return (
     <div className="px-4 pt-6 pb-28 flex flex-col gap-6">
       <div>
-        <h2 className="text-2xl font-bold text-[var(--text)]">이상형</h2>
-        <p className="text-sm text-[var(--text-muted)] mt-1">원하는 파트너의 조건을 알려주세요</p>
+        <h2 className="text-[28px] font-black text-[#111827] tracking-[-0.02em] leading-tight">이상형</h2>
+        <p className="text-sm text-[#6B7280] mt-1">원하는 파트너의 조건을 알려주세요</p>
       </div>
 
       <Field label="선호 출생연도">
@@ -512,7 +520,7 @@ function Step6() {
             className="flex-1 h-12 px-4 rounded-xl border border-[var(--border)] text-sm focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
             placeholder="1990"
           />
-          <span className="text-sm text-[var(--text-muted)]">~</span>
+          <span className="text-sm text-[#6B7280]">~</span>
           <input
             type="number"
             value={preferredAgeMax}
@@ -520,7 +528,7 @@ function Step6() {
             className="flex-1 h-12 px-4 rounded-xl border border-[var(--border)] text-sm focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
             placeholder="2002"
           />
-          <span className="text-sm text-[var(--text-muted)]">년생</span>
+          <span className="text-sm text-[#6B7280]">년생</span>
         </div>
       </Field>
 
@@ -545,7 +553,7 @@ function Step6() {
                 "h-9 px-3.5 rounded-full text-sm font-medium border transition-all active:scale-[0.97]",
                 preferredResidence.includes(city)
                   ? "bg-[var(--primary)] border-[var(--primary)] text-white"
-                  : "bg-[var(--surface)] border-[var(--border)] text-[var(--text)]"
+                  : "bg-[var(--surface)] border-[var(--border)] text-[#111827]"
               )}
             >
               {city}
@@ -560,7 +568,7 @@ function Step6() {
           onChange={(e) => setPreferredFreeText(e.target.value.slice(0, 100))}
           placeholder="기타 원하는 조건을 자유롭게 써주세요"
           rows={3}
-          className="w-full px-4 py-3 rounded-xl border border-[var(--border)] text-sm resize-none focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] placeholder:text-[var(--text-muted)]"
+          className="w-full px-4 py-3 rounded-xl border border-[var(--border)] text-sm resize-none focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] placeholder:text-[#6B7280]"
         />
       </Field>
 
@@ -577,8 +585,8 @@ function Step7() {
   return (
     <div className="px-4 pt-6 pb-28 flex flex-col gap-6">
       <div>
-        <h2 className="text-2xl font-bold text-[var(--text)]">자기소개</h2>
-        <p className="text-sm text-[var(--text-muted)] mt-1">상대방에게 나를 소개해주세요</p>
+        <h2 className="text-[28px] font-black text-[#111827] tracking-[-0.02em] leading-tight">자기소개</h2>
+        <p className="text-sm text-[#6B7280] mt-1">상대방에게 나를 소개해주세요</p>
       </div>
 
       <Field label="자기소개" hint={`${bio.length}/${MAX}자`}>
@@ -587,7 +595,7 @@ function Step7() {
           onChange={(e) => setBio(e.target.value.slice(0, MAX))}
           placeholder="어떤 사람인지, 어떤 만남을 원하는지 자유롭게 써주세요"
           rows={8}
-          className="w-full px-4 py-3 rounded-xl border border-[var(--border)] text-sm leading-relaxed resize-none focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] placeholder:text-[var(--text-muted)]"
+          className="w-full px-4 py-3 rounded-xl border border-[var(--border)] text-sm leading-relaxed resize-none focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] placeholder:text-[#6B7280]"
         />
       </Field>
 
@@ -623,8 +631,8 @@ function Step8() {
   return (
     <div className="px-4 pt-6 pb-28 flex flex-col gap-6">
       <div>
-        <h2 className="text-2xl font-bold text-[var(--text)]">사진 업로드</h2>
-        <p className="text-sm text-[var(--text-muted)] mt-1">
+        <h2 className="text-[28px] font-black text-[#111827] tracking-[-0.02em] leading-tight">사진 업로드</h2>
+        <p className="text-sm text-[#6B7280] mt-1">
           최소 2장, 최대 5장 · 첫 번째 사진이 대표 사진이에요
         </p>
       </div>
@@ -654,7 +662,7 @@ function Step8() {
           <button
             type="button"
             onClick={handleAdd}
-            className="aspect-[3/4] rounded-xl border-2 border-dashed border-[var(--border)] flex flex-col items-center justify-center gap-2 text-[var(--text-muted)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors"
+            className="aspect-[3/4] rounded-xl border-2 border-dashed border-[var(--border)] flex flex-col items-center justify-center gap-2 text-[#6B7280] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <line x1="12" y1="5" x2="12" y2="19" />
@@ -693,8 +701,8 @@ function Step9() {
   return (
     <div className="px-4 pt-6 pb-28 flex flex-col gap-6">
       <div>
-        <h2 className="text-2xl font-bold text-[var(--text)]">미리보기</h2>
-        <p className="text-sm text-[var(--text-muted)] mt-1">
+        <h2 className="text-[28px] font-black text-[#111827] tracking-[-0.02em] leading-tight">미리보기</h2>
+        <p className="text-sm text-[#6B7280] mt-1">
           다른 사람들에게 이렇게 보입니다
         </p>
       </div>
@@ -710,17 +718,17 @@ function Step9() {
           />
         ) : (
           <div className="w-full aspect-[3/4] bg-gray-100 flex items-center justify-center">
-            <p className="text-sm text-[var(--text-muted)]">사진 없음</p>
+            <p className="text-sm text-[#6B7280]">사진 없음</p>
           </div>
         )}
         <div className="p-5 flex flex-col gap-4">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-xl font-bold text-[var(--text)]">
+              <p className="text-xl font-bold text-[#111827]">
                 {store.name || "이름 미입력"},{" "}
                 {new Date().getFullYear() - store.birthYear + 1}세
               </p>
-              <p className="text-sm text-[var(--text-muted)] mt-0.5">
+              <p className="text-sm text-[#6B7280] mt-0.5">
                 {store.residenceCity} {store.residenceDistrict}
               </p>
             </div>
@@ -737,11 +745,11 @@ function Step9() {
           {/* Spec row */}
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1">
-              <p className="text-xs text-[var(--text-muted)] mb-1">스펙</p>
-              <p className="text-sm text-[var(--text)]">
+              <p className="text-xs text-[#6B7280] mb-1">스펙</p>
+              <p className="text-sm text-[#111827]">
                 {store.height}cm · {store.education}
               </p>
-              <p className="text-sm text-[var(--text)]">
+              <p className="text-sm text-[#111827]">
                 {store.company} · {store.jobTitle}
               </p>
             </div>
@@ -758,8 +766,8 @@ function Step9() {
           {/* Lifestyle row */}
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1">
-              <p className="text-xs text-[var(--text-muted)] mb-1">라이프스타일</p>
-              <p className="text-sm text-[var(--text)]">
+              <p className="text-xs text-[#6B7280] mb-1">라이프스타일</p>
+              <p className="text-sm text-[#111827]">
                 {store.mbti} · {store.smoking} · {store.drinking}
               </p>
               {store.hobbies.length > 0 && (
@@ -785,8 +793,8 @@ function Step9() {
           {/* Bio row */}
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1">
-              <p className="text-xs text-[var(--text-muted)] mb-1">자기소개</p>
-              <p className="text-sm text-[var(--text)] leading-relaxed line-clamp-3">
+              <p className="text-xs text-[#6B7280] mb-1">자기소개</p>
+              <p className="text-sm text-[#111827] leading-relaxed line-clamp-3">
                 {store.bio || "자기소개 없음"}
               </p>
             </div>
@@ -833,7 +841,7 @@ export default function OnboardingStepPage({
   if (!StepComponent) {
     return (
       <div className="px-4 pt-6">
-        <p className="text-[var(--text-muted)]">존재하지 않는 단계입니다</p>
+        <p className="text-[#6B7280]">존재하지 않는 단계입니다</p>
       </div>
     );
   }

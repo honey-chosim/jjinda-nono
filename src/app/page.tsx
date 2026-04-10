@@ -3,8 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const VALID_CODE_LENGTH = 8;
-
 export default function LandingPage() {
   const router = useRouter();
   const [code, setCode] = useState("");
@@ -13,7 +11,7 @@ export default function LandingPage() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (code.length !== VALID_CODE_LENGTH) {
+    if (code.length !== 8) {
       setError("유효하지 않은 코드입니다");
       return;
     }
@@ -22,40 +20,36 @@ export default function LandingPage() {
     setTimeout(() => {
       setLoading(false);
       router.push("/onboarding/2");
-    }, 600);
+    }, 500);
   }
 
   return (
-    <div className="min-h-dvh flex flex-col items-center justify-center bg-[var(--surface)] px-6">
-      {/* Logo mark */}
-      <div className="mb-10 flex flex-col items-center">
-        <div className="w-16 h-16 rounded-2xl bg-[var(--primary)] flex items-center justify-center mb-6 shadow-lg shadow-blue-200">
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-            <path
-              d="M16 4C9.373 4 4 9.373 4 16s5.373 12 12 12 12-5.373 12-12S22.627 4 16 4zm0 5a3.5 3.5 0 110 7 3.5 3.5 0 010-7zm0 15.5c-3.315 0-6.26-1.57-8.12-4.004C9.815 18.52 12.79 17.5 16 17.5s6.185 1.02 8.12 2.996C22.26 22.93 19.315 24.5 16 24.5z"
-              fill="white"
-            />
-          </svg>
-        </div>
-        <h1 className="text-4xl font-extrabold text-[var(--text)] tracking-tight">
-          찐따노노
-        </h1>
-        <p className="mt-2 text-sm font-medium text-[var(--text-muted)]">
-          검증된 사람들만의 소개팅
-        </p>
+    <main className="min-h-dvh bg-white flex flex-col">
+      {/* Top wordmark */}
+      <div className="px-6 pt-12 pb-0">
+        <span className="text-xs font-semibold tracking-[0.18em] text-[#3B82F6] uppercase">
+          Private
+        </span>
       </div>
 
-      {/* Card */}
-      <div className="w-full max-w-sm">
-        <div className="bg-[var(--surface)] border border-[var(--border)] rounded-3xl p-7 shadow-sm">
-          <p className="text-base font-medium text-[var(--text)] text-center mb-1">
-            초대받은 사람만 가입할 수 있습니다
+      {/* Hero */}
+      <div className="flex-1 flex flex-col justify-center px-6 pb-8">
+        <div className="max-w-sm">
+          {/* Headline */}
+          <h1 className="text-[52px] font-black text-[#111827] leading-[1.05] tracking-[-0.03em] mb-3">
+            찐따노노
+          </h1>
+          <p className="text-[18px] font-medium text-[#111827] leading-snug mb-2">
+            검증된 사람들만의 소개팅
           </p>
-          <p className="text-sm text-[var(--text-muted)] text-center mb-6">
-            초대 코드를 입력해 시작하세요
+          <p className="text-[15px] text-[#6B7280] leading-relaxed mb-12">
+            초대받은 분만 가입할 수 있습니다.
+            <br />
+            지인의 초대 코드를 입력해 시작하세요.
           </p>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
             <div>
               <input
                 type="text"
@@ -64,16 +58,17 @@ export default function LandingPage() {
                   setCode(e.target.value.toUpperCase().replace(/\s/g, ""));
                   setError("");
                 }}
-                placeholder="초대 코드 입력 (8자리)"
+                placeholder="초대 코드 8자리"
                 maxLength={8}
-                className={`w-full h-14 px-5 rounded-2xl border text-center text-lg font-semibold tracking-widest bg-[var(--bg)] transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)] placeholder:text-[var(--text-muted)] placeholder:font-normal placeholder:tracking-normal ${
+                autoCapitalize="characters"
+                className={`w-full h-[56px] px-5 rounded-2xl bg-[#F3F4F6] text-center text-lg font-bold tracking-[0.2em] text-[#111827] placeholder:font-normal placeholder:tracking-normal placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 transition-all ${
                   error
-                    ? "border-[var(--danger)] focus:ring-[var(--danger)]"
-                    : "border-[var(--border)]"
+                    ? "ring-2 ring-[#DC2626] bg-[#FEF2F2]"
+                    : "focus:ring-[#3B82F6] focus:bg-white"
                 }`}
               />
               {error && (
-                <p className="mt-2 text-sm text-[var(--danger)] text-center animate-slide-up">
+                <p className="mt-2 text-sm text-[#DC2626] font-medium text-center animate-slide-up">
                   {error}
                 </p>
               )}
@@ -82,30 +77,12 @@ export default function LandingPage() {
             <button
               type="submit"
               disabled={loading || code.length === 0}
-              className="w-full h-14 rounded-2xl bg-[var(--primary)] text-white text-base font-semibold transition-all duration-150 hover:bg-blue-600 active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed shadow-sm shadow-blue-200"
+              className="w-full h-[56px] rounded-2xl bg-[#111827] text-white text-[16px] font-semibold tracking-[-0.01em] transition-all active:scale-[0.98] disabled:opacity-30 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <svg
-                    className="animate-spin h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                    />
-                  </svg>
-                  확인 중...
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  확인 중
                 </span>
               ) : (
                 "시작하기"
@@ -113,14 +90,17 @@ export default function LandingPage() {
             </button>
           </form>
         </div>
+      </div>
 
-        <p className="mt-6 text-xs text-[var(--text-muted)] text-center leading-relaxed">
+      {/* Footer */}
+      <div className="px-6 pb-10 text-center">
+        <p className="text-[13px] text-[#9CA3AF]">
           초대 코드가 없으신가요?{" "}
-          <span className="text-[var(--primary)] font-medium cursor-pointer">
-            운영팀에 문의하기
-          </span>
+          <button className="text-[#3B82F6] font-medium underline-offset-2 hover:underline">
+            운영팀에 문의
+          </button>
         </p>
       </div>
-    </div>
+    </main>
   );
 }
