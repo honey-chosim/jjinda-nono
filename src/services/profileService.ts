@@ -20,7 +20,15 @@ const PUBLIC_PROFILE_COLUMNS = 'id,name,gender,birth_year,birth_month,birth_day,
 
 export async function getProfiles(currentUserId: string): Promise<ProfileView[]> {
   const supabase = getRawSupabaseClient()
-  const { data, error } = await supabase
+
+  // Fetch current user's gender to filter opposite gender only
+  const { data: me } = await supabase
+    .from('profiles')
+    .select('gender')
+    .eq('id', currentUserId)
+    .single()
+
+  let query = supabase
     .from('profiles')
     .select(PUBLIC_PROFILE_COLUMNS)
     .eq('is_active', true)
@@ -28,6 +36,11 @@ export async function getProfiles(currentUserId: string): Promise<ProfileView[]>
     .neq('id', currentUserId)
     .order('created_at', { ascending: false })
 
+  if (me?.gender) {
+    query = query.neq('gender', me.gender)
+  }
+
+  const { data, error } = await query
   if (error) throw error
   return ((data ?? []) as Record<string, unknown>[]).map(toProfileView)
 }

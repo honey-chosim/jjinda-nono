@@ -306,12 +306,40 @@ create policy "Users can insert their own daily limit"
 -- STORAGE BUCKETS
 -- ============================================================
 
--- Profile photos bucket (run via Supabase dashboard or management API)
--- insert into storage.buckets (id, name, public) values ('profile-photos', 'profile-photos', true);
--- Storage policy: authenticated users can upload to their own folder (user_id/*)
--- create policy "Users can upload own photos"
---   on storage.objects for insert to authenticated
---   with check (bucket_id = 'profile-photos' and (storage.foldername(name))[1] = auth.uid()::text);
--- create policy "Photos are publicly readable"
---   on storage.objects for select
---   using (bucket_id = 'profile-photos');
+-- Profile photos bucket (public bucket for profile images)
+insert into storage.buckets (id, name, public)
+values ('profile-photos', 'profile-photos', true)
+on conflict (id) do nothing;
+
+-- Storage policies
+-- Authenticated users can upload to their own folder (user_id/filename)
+create policy "Users can upload own photos"
+  on storage.objects for insert
+  to authenticated
+  with check (
+    bucket_id = 'profile-photos'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+-- Authenticated users can update/replace their own photos
+create policy "Users can update own photos"
+  on storage.objects for update
+  to authenticated
+  using (
+    bucket_id = 'profile-photos'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+-- Authenticated users can delete their own photos
+create policy "Users can delete own photos"
+  on storage.objects for delete
+  to authenticated
+  using (
+    bucket_id = 'profile-photos'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+-- Photos are publicly readable (bucket is public, but explicit policy for clarity)
+create policy "Photos are publicly readable"
+  on storage.objects for select
+  using (bucket_id = 'profile-photos');

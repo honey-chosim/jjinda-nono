@@ -569,21 +569,44 @@ function Step7() {
 function Step8() {
   const router = useRouter();
   const { photos, addPhoto, removePhoto } = useOnboardingStore();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
   const MIN_PHOTOS = 2;
   const MAX_PHOTOS = 5;
 
-  const MOCK_PHOTOS = [
-    "https://picsum.photos/seed/upload1/400/533",
-    "https://picsum.photos/seed/upload2/400/533",
-    "https://picsum.photos/seed/upload3/400/533",
-    "https://picsum.photos/seed/upload4/400/533",
-    "https://picsum.photos/seed/upload5/400/533",
-  ];
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (photos.length >= MAX_PHOTOS) return;
 
-  function handleAdd() {
-    if (photos.length < MAX_PHOTOS) {
-      const next = MOCK_PHOTOS[photos.length % MOCK_PHOTOS.length];
-      addPhoto(next);
+    setUploadError("");
+    setUploading(true);
+    try {
+      const supabase = getSupabaseClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("로그인이 필요합니다");
+
+      const ext = file.name.split(".").pop() ?? "jpg";
+      const path = `${user.id}/${Date.now()}.${ext}`;
+
+      const { error: uploadErr } = await supabase.storage
+        .from("profile-photos")
+        .upload(path, file, { upsert: false });
+
+      if (uploadErr) throw uploadErr;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from("profile-photos")
+        .getPublicUrl(path);
+
+      addPhoto(publicUrl);
+    } catch (err: unknown) {
+      setUploadError(err instanceof Error ? err.message : "업로드에 실패했습니다");
+    } finally {
+      setUploading(false);
+      // Reset file input so same file can be re-selected
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   }
 
@@ -596,8 +619,15 @@ function Step8() {
         </p>
       </div>
 
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+
       <div className="grid grid-cols-3 gap-3">
-        {/* Existing photos */}
         {photos.map((src, i) => (
           <div key={i} className="relative aspect-[3/4] rounded-xl overflow-hidden bg-gray-100">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -616,38 +646,41 @@ function Step8() {
           </div>
         ))}
 
-        {/* Add slot */}
         {photos.length < MAX_PHOTOS && (
           <button
             type="button"
-            onClick={handleAdd}
-            className="aspect-[3/4] rounded-xl border-2 border-dashed border-[var(--border)] flex flex-col items-center justify-center gap-2 text-[#6B7280] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading}
+            className="aspect-[3/4] rounded-xl border-2 border-dashed border-[var(--border)] flex flex-col items-center justify-center gap-2 text-[#6B7280] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors disabled:opacity-40"
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-            <span className="text-xs font-medium">사진 추가</span>
+            {uploading ? (
+              <div className="w-5 h-5 border-2 border-[#E5E7EB] border-t-[#111827] rounded-full animate-spin" />
+            ) : (
+              <>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                <span className="text-xs font-medium">사진 추가</span>
+              </>
+            )}
           </button>
         )}
       </div>
 
+      {uploadError && (
+        <p className="text-sm text-[#DC2626] text-center">{uploadError}</p>
+      )}
+
       {photos.length < MIN_PHOTOS && (
-        <p className="text-sm text-[var(--warning)] text-center">
+        <p className="text-sm text-[#6B7280] text-center">
           최소 {MIN_PHOTOS}장의 사진이 필요합니다
         </p>
       )}
 
-      <div className="bg-[#F3F4F6] rounded-xl p-4">
-        <p className="text-xs text-[#374151] leading-relaxed">
-          데모 모드: 사진 추가 버튼을 누르면 샘플 이미지가 추가됩니다.
-          실제 서비스에서는 갤러리에서 선택할 수 있습니다.
-        </p>
-      </div>
-
       <ContinueButton
         onClick={() => router.push("/onboarding/9")}
-        disabled={photos.length < MIN_PHOTOS}
+        disabled={photos.length < MIN_PHOTOS || uploading}
       />
     </div>
   );
@@ -656,6 +689,58 @@ function Step8() {
 function Step9() {
   const router = useRouter();
   const store = useOnboardingStore();
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
+
+  async function handleComplete() {
+    setSaveError("");
+    setSaving(true);
+    try {
+      const supabase = getSupabaseClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("로그인이 필요합니다");
+
+      await createProfile({
+        id: user.id,
+        name: store.name,
+        phone: store.phone.replace(/[-\s]/g, ""),
+        gender: store.gender,
+        birth_year: store.birthYear,
+        birth_month: store.birthMonth,
+        birth_day: store.birthDay,
+        height: store.height,
+        education: store.education,
+        school: store.school,
+        company: store.company,
+        job_title: store.jobTitle,
+        residence_city: store.residenceCity,
+        residence_district: store.residenceDistrict,
+        smoking: store.smoking,
+        drinking: store.drinking,
+        mbti: store.mbti,
+        hobbies: store.hobbies,
+        pet: store.pet,
+        bio: store.bio,
+        photos: store.photos,
+        preferred_age_min: store.preferredAgeMin,
+        preferred_age_max: store.preferredAgeMax,
+        preferred_height_min: store.preferredHeightMin,
+        preferred_residence: store.preferredResidence,
+        preferred_free_text: store.preferredFreeText,
+        onboarding_completed: true,
+      });
+
+      if (store.inviteCode) {
+        await consumeInviteCode(store.inviteCode, user.id);
+      }
+
+      router.push("/profiles");
+    } catch (err: unknown) {
+      setSaveError(err instanceof Error ? err.message : "저장에 실패했습니다");
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <div className="px-4 pt-6 pb-28 flex flex-col gap-6">
@@ -767,9 +852,14 @@ function Step9() {
         </div>
       </div>
 
+      {saveError && (
+        <p className="text-sm text-[#DC2626] text-center">{saveError}</p>
+      )}
+
       <ContinueButton
-        onClick={() => router.push("/profiles")}
-        label="등록 완료"
+        onClick={handleComplete}
+        disabled={saving}
+        label={saving ? "저장 중..." : "등록 완료"}
       />
     </div>
   );
