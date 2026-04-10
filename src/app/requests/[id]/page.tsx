@@ -49,7 +49,7 @@ export default function RequestDetailPage({
   }
 
   return (
-    <div className="min-h-dvh bg-[var(--surface)] pb-32">
+    <div className="min-h-dvh bg-white pb-40">
       {/* Back button */}
       <button
         onClick={() => router.back()}
@@ -163,7 +163,7 @@ export default function RequestDetailPage({
       )}
 
       {/* Fixed bottom actions */}
-      <div className="fixed bottom-0 left-0 right-0 bg-[var(--surface)] border-t border-[var(--border)] px-4 py-4 pb-safe">
+      <div className="fixed bottom-0 left-0 right-0 px-5 py-4 pb-safe" style={{background:"rgba(255,255,255,0.92)",backdropFilter:"blur(20px) saturate(180%)",WebkitBackdropFilter:"blur(20px) saturate(180%)",borderTop:"0.5px solid rgba(0,0,0,0.1)"}}>
         <div className="flex gap-3">
           <button
             onClick={() => setShowRejectModal(true)}

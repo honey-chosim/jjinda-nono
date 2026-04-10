@@ -25,10 +25,18 @@ export default function MyPage() {
   const { sentRequests } = useAppStore();
 
   return (
-    <div className="min-h-dvh bg-[var(--bg)] pb-24">
+    <div className="min-h-dvh bg-white pb-28">
       {/* Header */}
-      <div className="sticky top-0 z-30 bg-[var(--surface)] border-b border-[var(--border)] px-4 py-4">
-        <h1 className="text-xl font-bold text-[var(--text)]">MY</h1>
+      <div
+        className="sticky top-0 z-30 px-5 pt-12 pb-4"
+        style={{
+          background: "rgba(255,255,255,0.88)",
+          backdropFilter: "blur(20px) saturate(180%)",
+          WebkitBackdropFilter: "blur(20px) saturate(180%)",
+          borderBottom: "0.5px solid rgba(0,0,0,0.08)",
+        }}
+      >
+        <h1 className="text-[28px] font-black text-[#111827] tracking-[-0.03em]">MY</h1>
       </div>
 
       <div className="px-4 pt-4 flex flex-col gap-4">

@@ -4,36 +4,36 @@ import BottomNav from "@/components/layout/BottomNav";
 import RequestCard from "@/components/requests/RequestCard";
 import { mockRequests } from "@/data/mock-requests";
 
-const pendingRequests = mockRequests.filter((r) => r.status === "pending");
-
 export default function RequestsPage() {
   return (
-    <div className="min-h-dvh bg-[var(--bg)] pb-24">
+    <div className="min-h-dvh bg-white pb-28">
       {/* Header */}
-      <div className="sticky top-0 z-30 bg-[var(--surface)] border-b border-[var(--border)] px-4 py-4">
-        <div className="flex items-center gap-2">
-          <h1 className="text-xl font-bold text-[var(--text)]">받은 요청</h1>
-          {pendingRequests.length > 0 && (
-            <span className="bg-[var(--danger)] text-white text-xs font-bold px-2 py-0.5 rounded-full">
-              {pendingRequests.length}
+      <div
+        className="sticky top-0 z-30 px-5 pt-12 pb-4"
+        style={{
+          background: "rgba(255,255,255,0.88)",
+          backdropFilter: "blur(20px) saturate(180%)",
+          WebkitBackdropFilter: "blur(20px) saturate(180%)",
+          borderBottom: "0.5px solid rgba(0,0,0,0.08)",
+        }}
+      >
+        <div className="flex items-center gap-2.5">
+          <h1 className="text-[28px] font-black text-[#111827] tracking-[-0.03em]">
+            받은 요청
+          </h1>
+          {mockRequests.filter((r) => r.status === "pending").length > 0 && (
+            <span className="bg-[#DC2626] text-white text-[11px] font-bold px-2 py-0.5 rounded-full">
+              {mockRequests.filter((r) => r.status === "pending").length}
             </span>
           )}
         </div>
-        <p className="text-sm text-[var(--text-muted)] mt-0.5">
-          나에게 소개팅을 신청한 분들이에요
-        </p>
       </div>
 
       <div className="px-4 pt-4">
         {mockRequests.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 text-center">
-            <p className="text-4xl mb-4">💌</p>
-            <p className="text-base font-semibold text-[var(--text)]">
-              아직 받은 요청이 없어요
-            </p>
-            <p className="text-sm text-[var(--text-muted)] mt-1">
-              프로필을 완성하면 더 많은 분들이 찾아올 거예요
-            </p>
+          <div className="flex flex-col items-center justify-center py-32 text-center">
+            <p className="text-[15px] font-semibold text-[#111827]">아직 받은 요청이 없어요</p>
+            <p className="text-[13px] text-[#9CA3AF] mt-1">프로필을 완성하면 더 많은 분들이 찾아올 거예요</p>
           </div>
         ) : (
           <div className="flex flex-col gap-3">

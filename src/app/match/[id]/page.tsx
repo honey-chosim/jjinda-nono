@@ -27,9 +27,9 @@ export default function MatchPage({
   }
 
   return (
-    <div className="min-h-dvh bg-[var(--bg)] flex flex-col">
+    <div className="min-h-dvh bg-white flex flex-col">
       {/* Back */}
-      <div className="bg-[var(--surface)] border-b border-[var(--border)] px-4 py-4 flex items-center gap-3">
+      <div className="px-5 pt-12 pb-4 flex items-center gap-3">
         <button
           onClick={() => router.push("/requests")}
           className="flex items-center gap-1 text-sm text-[var(--text-muted)] hover:text-[var(--text)] transition-colors"
