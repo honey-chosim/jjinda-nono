@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import ProfileCard from "@/components/profiles/ProfileCard";
 import BottomNav from "@/components/layout/BottomNav";
 import { mockProfiles } from "@/data/mock-profiles";
@@ -15,8 +15,34 @@ const allProfiles = [
 
 export default function ProfilesPage() {
   const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT);
+  const [isLoading, setIsLoading] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
   const visible = allProfiles.slice(0, visibleCount);
   const hasMore = visibleCount < allProfiles.length;
+
+  const loadMore = useCallback(() => {
+    if (isLoading || !hasMore) return;
+    setIsLoading(true);
+    setTimeout(() => {
+      setVisibleCount((c) => c + LOAD_MORE);
+      setIsLoading(false);
+    }, 300);
+  }, [isLoading, hasMore]);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) loadMore();
+      },
+      { rootMargin: "200px" }
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [loadMore]);
 
   return (
     <div className="min-h-dvh bg-white pb-24">
@@ -50,14 +76,18 @@ export default function ProfilesPage() {
               ))}
             </div>
 
-            {hasMore && (
-              <div className="mt-8 mb-2 flex justify-center">
-                <button
-                  onClick={() => setVisibleCount((c) => c + LOAD_MORE)}
-                  className="px-8 h-11 rounded-full bg-[#F3F4F6] text-[14px] font-semibold text-[#111827] active:scale-[0.97] transition-transform"
-                >
-                  더 보기
-                </button>
+            {/* Sentinel for IntersectionObserver */}
+            <div ref={sentinelRef} className="h-1" />
+
+            {isLoading && (
+              <div className="flex justify-center py-6">
+                <div className="w-5 h-5 border-2 border-[#E5E7EB] border-t-[#111827] rounded-full animate-spin" />
+              </div>
+            )}
+
+            {!hasMore && visible.length > 0 && (
+              <div className="py-8 text-center">
+                <p className="text-[13px] text-[#9CA3AF]">모든 프로필을 확인했어요</p>
               </div>
             )}
           </>
