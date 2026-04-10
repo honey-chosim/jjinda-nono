@@ -9,7 +9,7 @@ export default function RequestsPage() {
     <div className="min-h-dvh bg-white pb-28">
       {/* Header */}
       <div
-        className="sticky top-0 z-30 px-5 pt-12 pb-4"
+        className="fixed top-0 left-0 right-0 z-30 px-5 pt-12 pb-4"
         style={{
           background: "rgba(255,255,255,0.88)",
           backdropFilter: "blur(20px) saturate(180%)",
@@ -29,7 +29,7 @@ export default function RequestsPage() {
         </div>
       </div>
 
-      <div className="px-4 pt-4">
+      <div className="px-4 pt-[100px]">
         {mockRequests.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32 text-center">
             <p className="text-[15px] font-semibold text-[#111827]">아직 받은 요청이 없어요</p>
