@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { cn } from "@/lib/utils";
 
 interface PhotoSwiperProps {
@@ -11,9 +11,28 @@ interface PhotoSwiperProps {
 
 export default function PhotoSwiper({ photos, name }: PhotoSwiperProps) {
   const [current, setCurrent] = useState(0);
+  const touchStartX = useRef<number | null>(null);
+
+  function handleTouchStart(e: React.TouchEvent) {
+    touchStartX.current = e.touches[0].clientX;
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 40) {
+      if (diff > 0) setCurrent((c) => Math.min(photos.length - 1, c + 1));
+      else setCurrent((c) => Math.max(0, c - 1));
+    }
+    touchStartX.current = null;
+  }
 
   return (
-    <div className="relative w-full aspect-[3/4] bg-gray-100 overflow-hidden">
+    <div
+      className="relative w-full aspect-[3/4] bg-gray-100 overflow-hidden"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* Photos */}
       <div
         className="flex h-full transition-transform duration-300 ease-out"

@@ -1,10 +1,12 @@
 "use client";
 
-import { use, useState } from "react";
+import { use, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { mockRequests } from "@/data/mock-requests";
-import { mockProfiles } from "@/data/mock-profiles";
+import { getMatchByRequestId } from "@/services/matchService";
+import { markPaymentComplete } from "@/services/matchService";
+import { getSupabaseClient } from "@/lib/supabase";
+import type { MatchWithProfiles } from "@/types/database";
 
 export default function MatchPage({
   params,
@@ -13,22 +15,48 @@ export default function MatchPage({
 }) {
   const { id } = use(params);
   const router = useRouter();
-  const [showConfirm, setShowConfirm] = useState(false);
+  const [match, setMatch] = useState<MatchWithProfiles | null>(null);
+  const [isFetching, setIsFetching] = useState(true);
   const [paid, setPaid] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
-  // id could be a request id or profile id
-  const request = mockRequests.find((r) => r.id === id);
-  const profile = mockProfiles.find((p) => p.id === id);
-  const matchName = request?.requesterName ?? profile?.name ?? "상대방";
+  useEffect(() => {
+    async function fetchMatch() {
+      try {
+        const supabase = getSupabaseClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        setCurrentUserId(user.id);
+        const matchData = await getMatchByRequestId(id);
+        setMatch(matchData);
+        if (matchData?.payment_status === 'paid') setPaid(true);
+      } catch (err) {
+        console.error("Failed to fetch match:", err);
+      } finally {
+        setIsFetching(false);
+      }
+    }
+    fetchMatch();
+  }, [id]);
 
-  function handlePaid() {
-    setPaid(true);
-    setTimeout(() => setShowConfirm(false), 200);
+  async function handlePaid() {
+    if (!match || !currentUserId) return;
+    try {
+      await markPaymentComplete(match.id, currentUserId);
+      setPaid(true);
+    } catch (err) {
+      console.error("Failed to mark payment:", err);
+      setPaid(true); // optimistic
+    }
   }
+
+  // Determine the other person's name
+  const matchName = match
+    ? (match.user1_id === currentUserId ? match.user2.name : match.user1.name)
+    : "상대방";
 
   return (
     <div className="min-h-dvh bg-white flex flex-col">
-      {/* Back */}
       <div className="px-5 pb-3 flex items-center gap-3" style={{ paddingTop: "max(16px, env(safe-area-inset-top))" }}>
         <button
           onClick={() => router.push("/requests")}
@@ -42,7 +70,6 @@ export default function MatchPage({
       </div>
 
       <div className="flex-1 px-4 py-4 flex flex-col gap-4 max-w-sm mx-auto w-full">
-        {/* Celebration */}
         <div className="text-center py-3">
           <div className="text-4xl mb-3">🎉</div>
           <h1 className="text-xl font-bold text-[var(--text)]">매칭 성사!</h1>
@@ -52,20 +79,15 @@ export default function MatchPage({
           </p>
         </div>
 
-        {/* Payment card */}
         <div className="bg-[var(--surface)] rounded-3xl border border-[var(--border)] shadow-sm overflow-hidden">
           <div className="px-5 pt-5 pb-4 border-b border-[var(--border)]">
             <h2 className="text-base font-bold text-[var(--text)]">소개팅 비용 안내</h2>
             <p className="mt-1 text-sm text-[var(--text-muted)]">아래 계좌로 입금해 주세요</p>
           </div>
-
-          {/* Amount */}
           <div className="px-5 py-4 flex items-center justify-between border-b border-[var(--border)]">
             <span className="text-sm text-[var(--text-muted)]">결제 금액</span>
             <span className="text-xl font-bold text-[var(--text)]">30,000원</span>
           </div>
-
-          {/* Bank info — receipt style */}
           <div className="px-5 py-4 bg-gray-50 divide-y divide-[var(--border)]">
             {[
               { label: "은행", value: "카카오뱅크" },
@@ -74,13 +96,10 @@ export default function MatchPage({
             ].map((item) => (
               <div key={item.label} className="flex justify-between py-2.5">
                 <span className="text-xs text-[var(--text-muted)]">{item.label}</span>
-                <span className="text-sm font-semibold text-[var(--text)] font-mono tracking-wide">
-                  {item.value}
-                </span>
+                <span className="text-sm font-semibold text-[var(--text)] font-mono tracking-wide">{item.value}</span>
               </div>
             ))}
           </div>
-
           <div className="px-5 py-4 bg-[#F3F4F6]">
             <p className="text-xs text-[#374151] leading-relaxed text-center font-medium">
               입금 후 1시간 내 카카오톡 단톡방을 개설해드립니다
@@ -88,7 +107,6 @@ export default function MatchPage({
           </div>
         </div>
 
-        {/* Info box */}
         <div className="bg-[var(--surface)] rounded-2xl border border-[var(--border)] p-4">
           <div className="flex gap-3">
             <span className="text-lg flex-shrink-0">💬</span>
@@ -99,7 +117,6 @@ export default function MatchPage({
           </div>
         </div>
 
-        {/* CTA */}
         {paid ? (
           <div className="flex items-center justify-center gap-2 w-full h-12 rounded-2xl bg-green-50 text-green-700 font-semibold text-sm border border-green-200">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
