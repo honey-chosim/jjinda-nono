@@ -491,92 +491,9 @@ function Step5() {
       </Field>
 
       <ContinueButton
-        onClick={() => router.push("/onboarding/6")}
+        onClick={() => router.push("/onboarding/7")}
         disabled={!smoking || !drinking}
       />
-    </div>
-  );
-}
-
-function Step6() {
-  const router = useRouter();
-  const {
-    preferredAgeMin, setPreferredAgeMin,
-    preferredAgeMax, setPreferredAgeMax,
-    preferredHeightMin, setPreferredHeightMin,
-    preferredResidence, togglePreferredResidence,
-    preferredFreeText, setPreferredFreeText,
-  } = useOnboardingStore();
-
-  return (
-    <div className="px-4 pt-6 pb-28 flex flex-col gap-6">
-      <div>
-        <h2 className="text-[28px] font-black text-[#111827] tracking-[-0.02em] leading-tight">이상형</h2>
-        <p className="text-sm text-[#6B7280] mt-1">원하는 파트너의 조건을 알려주세요</p>
-      </div>
-
-      <Field label="선호 출생연도">
-        <div className="flex items-center gap-3">
-          <input
-            type="number"
-            value={preferredAgeMin}
-            onChange={(e) => setPreferredAgeMin(Number(e.target.value))}
-            className="flex-1 h-12 px-4 rounded-xl border border-[var(--border)] text-sm focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
-            placeholder="1990"
-          />
-          <span className="text-sm text-[#6B7280]">~</span>
-          <input
-            type="number"
-            value={preferredAgeMax}
-            onChange={(e) => setPreferredAgeMax(Number(e.target.value))}
-            className="flex-1 h-12 px-4 rounded-xl border border-[var(--border)] text-sm focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)]"
-            placeholder="2002"
-          />
-          <span className="text-sm text-[#6B7280]">년생</span>
-        </div>
-      </Field>
-
-      <Field label="선호 최소 키">
-        <TextInput
-          value={preferredHeightMin === 0 ? "" : String(preferredHeightMin)}
-          onChange={(v) => setPreferredHeightMin(Number(v) || 0)}
-          type="number"
-          placeholder="키 입력 (선택)"
-          suffix="cm 이상"
-        />
-      </Field>
-
-      <Field label="선호 거주지" hint="복수 선택 가능">
-        <div className="flex flex-wrap gap-2">
-          {CITIES.map((city) => (
-            <button
-              key={city}
-              type="button"
-              onClick={() => togglePreferredResidence(city)}
-              className={cn(
-                "h-9 px-3.5 rounded-full text-sm font-medium border transition-all active:scale-[0.97]",
-                preferredResidence.includes(city)
-                  ? "bg-[var(--primary)] border-[var(--primary)] text-white"
-                  : "bg-[var(--surface)] border-[var(--border)] text-[#111827]"
-              )}
-            >
-              {city}
-            </button>
-          ))}
-        </div>
-      </Field>
-
-      <Field label="기타 선호사항" hint={`${preferredFreeText.length}/100자`}>
-        <textarea
-          value={preferredFreeText}
-          onChange={(e) => setPreferredFreeText(e.target.value.slice(0, 100))}
-          placeholder="기타 원하는 조건을 자유롭게 써주세요"
-          rows={3}
-          className="w-full px-4 py-3 rounded-xl border border-[var(--border)] text-sm resize-none focus:outline-none focus:border-[var(--primary)] focus:ring-1 focus:ring-[var(--primary)] placeholder:text-[#6B7280]"
-        />
-      </Field>
-
-      <ContinueButton onClick={() => router.push("/onboarding/7")} />
     </div>
   );
 }
@@ -827,7 +744,7 @@ const STEP_COMPONENTS: Record<number, React.FC> = {
   3: Step3,
   4: Step4,
   5: Step5,
-  6: Step6,
+
   7: Step7,
   8: Step8,
   9: Step9,

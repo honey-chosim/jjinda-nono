@@ -7,13 +7,15 @@ export default function OnboardingLayout({ children }: { children: React.ReactNo
   const pathname = usePathname();
   const stepMatch = pathname.match(/\/onboarding\/(\d+)/);
   const currentStep = stepMatch ? parseInt(stepMatch[1]) : 2;
-  // Steps 2–9 = 8 steps total, display as 1–8
-  const displayStep = currentStep - 1;
-  const totalSteps = 8;
+  // Steps 2,3,4,5,7,8,9 → display 1,2,3,4,5,6,7
+  const stepToDisplay: Record<number, number> = { 2:1, 3:2, 4:3, 5:4, 7:5, 8:6, 9:7 };
+  const displayStep = stepToDisplay[currentStep] ?? 1;
+  const totalSteps = 7;
   const progress = (displayStep / totalSteps) * 100;
 
   function handleBack() {
     if (currentStep <= 2) router.push("/");
+    else if (currentStep === 7) router.push("/onboarding/5");
     else router.push(`/onboarding/${currentStep - 1}`);
   }
 
