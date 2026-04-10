@@ -27,7 +27,7 @@ export default function LandingPage() {
     <main className="min-h-dvh bg-white flex flex-col">
       {/* Top wordmark */}
       <div className="px-6 pt-12 pb-0">
-        <span className="text-xs font-semibold tracking-[0.18em] text-[#3B82F6] uppercase">
+        <span className="text-xs font-semibold tracking-[0.18em] text-[#9CA3AF] uppercase">
           Private
         </span>
       </div>
@@ -64,7 +64,7 @@ export default function LandingPage() {
                 className={`w-full h-[56px] px-5 rounded-2xl bg-[#F3F4F6] text-center text-lg font-bold tracking-[0.2em] text-[#111827] placeholder:font-normal placeholder:tracking-normal placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 transition-all ${
                   error
                     ? "ring-2 ring-[#DC2626] bg-[#FEF2F2]"
-                    : "focus:ring-[#3B82F6] focus:bg-white"
+                    : "focus:ring-[#111827] focus:bg-white"
                 }`}
               />
               {error && (
@@ -96,7 +96,7 @@ export default function LandingPage() {
       <div className="px-6 pb-10 text-center">
         <p className="text-[13px] text-[#9CA3AF]">
           초대 코드가 없으신가요?{" "}
-          <button className="text-[#3B82F6] font-medium underline-offset-2 hover:underline">
+          <button className="text-[#111827] font-medium underline-offset-2 hover:underline">
             운영팀에 문의
           </button>
         </p>

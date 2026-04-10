@@ -135,7 +135,7 @@ export default function RequestDetailPage({
               <span className="text-xs text-[var(--text-muted)] w-12 flex-shrink-0 pt-0.5">취미</span>
               <div className="flex flex-wrap gap-1.5">
                 {request.requesterHobbies.map((h) => (
-                  <span key={h} className="text-xs bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full font-medium">
+                  <span key={h} className="text-xs bg-[#F3F4F6] text-[#374151] px-2.5 py-1 rounded-full font-medium">
                     {h}
                   </span>
                 ))}
@@ -173,7 +173,7 @@ export default function RequestDetailPage({
           </button>
           <button
             onClick={() => setShowAcceptModal(true)}
-            className="flex-1 h-14 rounded-2xl bg-[var(--primary)] text-white text-sm font-semibold hover:bg-blue-600 active:scale-[0.98] transition-all shadow-sm shadow-blue-200"
+            className="flex-1 h-14 rounded-2xl bg-[var(--primary)] text-white text-sm font-semibold hover:bg-[#1F2937] active:scale-[0.98] transition-all shadow-sm "
           >
             수락하기
           </button>

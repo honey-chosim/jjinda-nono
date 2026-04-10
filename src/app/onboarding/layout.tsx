@@ -22,7 +22,7 @@ export default function OnboardingLayout({ children }: { children: React.ReactNo
       {/* Progress bar */}
       <div className="h-[2px] bg-[#F3F4F6] flex-shrink-0">
         <div
-          className="h-full bg-[#3B82F6] transition-all duration-400 ease-out"
+          className="h-full bg-[#111827] transition-all duration-400 ease-out"
           style={{ width: `${progress}%` }}
         />
       </div>

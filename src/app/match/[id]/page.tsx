@@ -81,8 +81,8 @@ export default function MatchPage({
             ))}
           </div>
 
-          <div className="px-5 py-4 bg-blue-50">
-            <p className="text-xs text-blue-700 leading-relaxed text-center font-medium">
+          <div className="px-5 py-4 bg-[#F3F4F6]">
+            <p className="text-xs text-[#374151] leading-relaxed text-center font-medium">
               입금 후 1시간 내 카카오톡 단톡방을 개설해드립니다
             </p>
           </div>
@@ -110,7 +110,7 @@ export default function MatchPage({
         ) : (
           <button
             onClick={handlePaid}
-            className="w-full h-14 rounded-2xl bg-[var(--primary)] text-white text-base font-semibold hover:bg-blue-600 active:scale-[0.98] transition-all shadow-sm shadow-blue-200"
+            className="w-full h-14 rounded-2xl bg-[var(--primary)] text-white text-base font-semibold hover:bg-[#1F2937] active:scale-[0.98] transition-all shadow-sm "
           >
             입금 완료 알리기
           </button>

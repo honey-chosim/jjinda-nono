@@ -147,7 +147,7 @@ export default function ProfileDetailPage({
                 {profile.hobbies.map((h) => (
                   <span
                     key={h}
-                    className="text-xs bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full font-medium"
+                    className="text-xs bg-[#F3F4F6] text-[#374151] px-2.5 py-1 rounded-full font-medium"
                   >
                     {h}
                   </span>
@@ -192,7 +192,7 @@ export default function ProfileDetailPage({
         ) : (
           <button
             onClick={() => setShowModal(true)}
-            className="w-full h-14 rounded-2xl bg-[var(--primary)] text-white text-base font-semibold hover:bg-blue-600 active:scale-[0.98] transition-all shadow-sm shadow-blue-200"
+            className="w-full h-14 rounded-2xl bg-[var(--primary)] text-white text-base font-semibold hover:bg-[#1F2937] active:scale-[0.98] transition-all shadow-sm "
           >
             소개팅 신청하기
           </button>

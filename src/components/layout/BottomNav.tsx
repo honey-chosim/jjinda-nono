@@ -70,7 +70,7 @@ export default function BottomNav() {
               href={href}
               className={cn(
                 "flex-1 flex flex-col items-center justify-center gap-[3px] py-2.5 min-h-[52px] relative transition-opacity active:opacity-60",
-                active ? "text-[#3B82F6]" : "text-[#9CA3AF]"
+                active ? "text-[#111827]" : "text-[#9CA3AF]"
               )}
             >
               <span className="relative">
@@ -81,7 +81,7 @@ export default function BottomNav() {
                   </span>
                 )}
               </span>
-              <span className={cn("text-[10px] font-medium tracking-tight", active && "font-semibold text-[#3B82F6]")}>
+              <span className={cn("text-[10px] font-medium tracking-tight", active && "font-semibold text-[#111827]")}>
                 {label}
               </span>
             </Link>

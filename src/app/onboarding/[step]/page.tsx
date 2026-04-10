@@ -66,7 +66,7 @@ function ToggleButton({
         "h-12 px-4 rounded-xl border text-sm font-medium transition-all duration-150 active:scale-[0.97]",
         fullWidth && "flex-1",
         active
-          ? "bg-[#3B82F6] border-[#3B82F6] text-white font-semibold"
+          ? "bg-[#111827] border-[#111827] text-white font-semibold"
           : "bg-[#F3F4F6] border-transparent text-[#111827] hover:bg-[#E5E7EB]"
       )}
     >
@@ -112,7 +112,7 @@ function Select({
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="w-full h-[52px] px-4 rounded-2xl bg-[#F3F4F6] text-[15px] text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:bg-white transition-all border border-transparent appearance-none"
+      className="w-full h-[52px] px-4 rounded-2xl bg-[#F3F4F6] text-[15px] text-[#111827] focus:outline-none focus:ring-2 focus:ring-[#111827] focus:bg-white transition-all border border-transparent appearance-none"
     >
       {placeholder && (
         <option value="" disabled>
@@ -150,7 +150,7 @@ function TextInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full h-[52px] px-4 rounded-2xl bg-[#F3F4F6] text-[15px] text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#3B82F6] focus:bg-white transition-all border border-transparent focus:border-[#3B82F6]"
+        className="w-full h-[52px] px-4 rounded-2xl bg-[#F3F4F6] text-[15px] text-[#111827] placeholder:text-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#111827] focus:bg-white transition-all border border-transparent"
       />
       {suffix && (
         <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-[#6B7280]">
@@ -242,7 +242,7 @@ function Step2() {
           <button
             type="button"
             onClick={sendCode}
-            className="flex-shrink-0 h-12 px-4 rounded-xl bg-[var(--primary)] text-white text-sm font-semibold whitespace-nowrap hover:bg-blue-600 transition-colors"
+            className="flex-shrink-0 h-12 px-4 rounded-xl bg-[var(--primary)] text-white text-sm font-semibold whitespace-nowrap hover:bg-[#1F2937] transition-colors"
           >
             인증번호 받기
           </button>
@@ -679,8 +679,8 @@ function Step8() {
         </p>
       )}
 
-      <div className="bg-blue-50 rounded-xl p-4">
-        <p className="text-xs text-blue-700 leading-relaxed">
+      <div className="bg-[#F3F4F6] rounded-xl p-4">
+        <p className="text-xs text-[#374151] leading-relaxed">
           데모 모드: 사진 추가 버튼을 누르면 샘플 이미지가 추가됩니다.
           실제 서비스에서는 갤러리에서 선택할 수 있습니다.
         </p>
@@ -773,7 +773,7 @@ function Step9() {
               {store.hobbies.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-1">
                   {store.hobbies.map((h) => (
-                    <span key={h} className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
+                    <span key={h} className="text-xs bg-[#F3F4F6] text-[#374151] px-2 py-0.5 rounded-full">
                       {h}
                     </span>
                   ))}

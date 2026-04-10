@@ -35,7 +35,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           "active:scale-[0.98]",
           {
             // variants
-            "bg-[var(--primary)] text-white hover:bg-blue-600 shadow-sm":
+            "bg-[var(--primary)] text-white hover:bg-[#1F2937] shadow-sm":
               variant === "primary",
             "bg-[var(--secondary)] text-white hover:bg-purple-600 shadow-sm":
               variant === "secondary",
