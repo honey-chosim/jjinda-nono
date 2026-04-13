@@ -201,10 +201,12 @@ function ContinueButton({
 function Step2() {
   const router = useRouter();
   const { phone, setPhone } = useOnboardingStore();
+  const [codeSent, setCodeSent] = useState(false);
+  const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleNext() {
+  async function sendCode() {
     const digits = phone.replace(/[-\s]/g, "");
     if (!digits.startsWith("010") || digits.length !== 11) {
       setError("010으로 시작하는 11자리 번호를 입력해주세요");
@@ -213,13 +215,49 @@ function Step2() {
     setError("");
     setLoading(true);
     try {
+      const res = await fetch("/api/auth/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: digits }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "SMS 발송 실패");
+      setCodeSent(true);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "인증번호 발송에 실패했습니다");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function verify() {
+    if (!code || code.length !== 6) {
+      setError("6자리 인증번호를 입력해주세요");
+      return;
+    }
+    setError("");
+    setLoading(true);
+    try {
+      const digits = phone.replace(/[-\s]/g, "");
+      const res = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: digits, code }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "인증 실패");
+
+      // Use token hash to sign in via Supabase
       const supabase = getSupabaseClient();
-      // Sign in anonymously — phone number is stored in profile at onboarding end
-      const { error: signInError } = await supabase.auth.signInAnonymously();
-      if (signInError) throw signInError;
+      const { error: otpError } = await supabase.auth.verifyOtp({
+        token_hash: data.tokenHash,
+        type: "email",
+      });
+      if (otpError) throw otpError;
+
       router.push("/onboarding/3");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "오류가 발생했습니다. 다시 시도해주세요");
+      setError(err instanceof Error ? err.message : "인증에 실패했습니다");
     } finally {
       setLoading(false);
     }
@@ -228,31 +266,55 @@ function Step2() {
   return (
     <div className="px-4 pt-6 pb-28 flex flex-col gap-6">
       <div>
-        <h2 className="text-[28px] font-black text-[#111827] tracking-[-0.02em] leading-tight">전화번호 입력</h2>
+        <h2 className="text-[28px] font-black text-[#111827] tracking-[-0.02em] leading-tight">전화번호 인증</h2>
         <p className="text-sm text-[#6B7280] mt-1">
-          본인 명의 전화번호를 입력해주세요
+          본인 명의 전화번호로 인증해주세요
         </p>
       </div>
 
       <Field label="전화번호">
-        <TextInput
-          value={phone}
-          onChange={(v) => {
-            setPhone(v);
-            setError("");
-          }}
-          placeholder="010-0000-0000"
-          type="tel"
-        />
-        {error && (
-          <p className="text-xs text-[#DC2626] mt-1">{error}</p>
-        )}
+        <div className="flex gap-2">
+          <TextInput
+            value={phone}
+            onChange={(v) => { setPhone(v); setError(""); }}
+            placeholder="010-0000-0000"
+            type="tel"
+          />
+          <button
+            type="button"
+            onClick={sendCode}
+            disabled={loading || !phone || codeSent}
+            className="flex-shrink-0 h-[52px] px-4 rounded-2xl bg-[var(--primary)] text-white text-sm font-semibold whitespace-nowrap hover:bg-[#1F2937] transition-colors disabled:opacity-40"
+          >
+            {loading && !codeSent ? "발송 중..." : codeSent ? "발송됨" : "인증번호 받기"}
+          </button>
+        </div>
+        {error && !codeSent && <p className="text-xs text-[#DC2626] mt-1">{error}</p>}
       </Field>
 
+      {codeSent && (
+        <Field label="인증번호" hint="5분 내에 입력해주세요">
+          <TextInput
+            value={code}
+            onChange={(v) => { setCode(v); setError(""); }}
+            placeholder="6자리 입력"
+            type="text"
+          />
+          {error && <p className="text-xs text-[#DC2626]">{error}</p>}
+          <button
+            type="button"
+            onClick={sendCode}
+            className="text-xs text-[#6B7280] underline self-start"
+          >
+            인증번호 재발송
+          </button>
+        </Field>
+      )}
+
       <ContinueButton
-        onClick={handleNext}
-        disabled={loading || !phone}
-        label={loading ? "처리 중..." : "다음"}
+        onClick={codeSent ? verify : sendCode}
+        disabled={loading || !phone || (codeSent && code.length !== 6)}
+        label={loading ? "처리 중..." : codeSent ? "인증 완료" : "인증번호 받기"}
       />
     </div>
   );
