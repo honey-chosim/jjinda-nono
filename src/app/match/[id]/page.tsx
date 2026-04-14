@@ -19,6 +19,14 @@ export default function MatchPage({
   const [isFetching, setIsFetching] = useState(true);
   const [paid, setPaid] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  function copyAccount() {
+    navigator.clipboard.writeText("979-053466-01-019").then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
 
   useEffect(() => {
     async function fetchMatch() {
@@ -90,9 +98,9 @@ export default function MatchPage({
           </div>
           <div className="px-5 py-4 bg-gray-50 divide-y divide-[var(--border)]">
             {[
-              { label: "은행", value: "카카오뱅크" },
-              { label: "계좌번호", value: "333-3333-3333" },
-              { label: "예금주", value: "찐따노노" },
+              { label: "은행", value: "기업은행" },
+              { label: "계좌번호", value: "979-053466-01-019" },
+              { label: "예금주", value: "심규헌" },
             ].map((item) => (
               <div key={item.label} className="flex justify-between py-2.5">
                 <span className="text-xs text-[var(--text-muted)]">{item.label}</span>
@@ -100,7 +108,15 @@ export default function MatchPage({
               </div>
             ))}
           </div>
-          <div className="px-5 py-4 bg-[#F3F4F6]">
+          <div className="px-5 py-3">
+            <button
+              onClick={copyAccount}
+              className="w-full h-11 rounded-xl bg-[#F3F4F6] text-sm font-semibold text-[#111827] active:scale-[0.98] transition-all"
+            >
+              {copied ? "복사됐어요!" : "계좌번호 복사하기"}
+            </button>
+          </div>
+          <div className="px-5 pb-4 bg-[#F3F4F6]">
             <p className="text-xs text-[#374151] leading-relaxed text-center font-medium">
               입금 후 1시간 내 카카오톡 단톡방을 개설해드립니다
             </p>

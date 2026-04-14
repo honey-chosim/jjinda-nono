@@ -36,17 +36,17 @@ export default function LandingPage() {
   }
 
   return (
-    <main className="min-h-dvh bg-white flex flex-col">
+    <main className="min-h-dvh bg-white flex flex-col items-center">
       {/* Top wordmark */}
-      <div className="px-6 pt-12 pb-0">
+      <div className="w-full max-w-sm px-6 pt-12 pb-0">
         <span className="text-xs font-semibold tracking-[0.18em] text-[#9CA3AF] uppercase">
           Private
         </span>
       </div>
 
       {/* Hero */}
-      <div className="flex-1 flex flex-col justify-center px-6 pb-8">
-        <div className="max-w-sm">
+      <div className="flex-1 flex flex-col justify-center px-6 pb-8 w-full max-w-sm">
+        <div>
           {/* Headline */}
           <h1 className="text-[52px] font-black text-[#111827] leading-[1.05] tracking-[-0.03em] mb-3">
             찐따노노
@@ -105,7 +105,7 @@ export default function LandingPage() {
       </div>
 
       {/* Footer */}
-      <div className="px-6 pb-10 text-center">
+      <div className="w-full max-w-sm px-6 pb-10 text-center">
         <p className="text-[13px] text-[#9CA3AF]">
           초대 코드가 없으신가요?{" "}
           <button className="text-[#111827] font-medium underline-offset-2 hover:underline">

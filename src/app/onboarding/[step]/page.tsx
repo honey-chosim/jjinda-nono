@@ -177,7 +177,7 @@ function ContinueButton({
 }) {
   return (
     <div
-      className="fixed bottom-0 left-0 right-0 px-5 py-4 pb-safe"
+      className="fixed bottom-0 left-0 right-0"
       style={{
         background: "rgba(255,255,255,0.88)",
         backdropFilter: "blur(20px) saturate(180%)",
@@ -185,13 +185,15 @@ function ContinueButton({
         borderTop: "0.5px solid rgba(0,0,0,0.1)",
       }}
     >
-      <button
-        onClick={onClick}
-        disabled={disabled}
-        className="w-full h-[56px] rounded-2xl bg-[#111827] text-white text-[16px] font-semibold tracking-[-0.01em] active:scale-[0.98] transition-transform disabled:opacity-25 disabled:cursor-not-allowed"
-      >
-        {label}
-      </button>
+      <div className="max-w-lg mx-auto px-5 py-4 pb-safe">
+        <button
+          onClick={onClick}
+          disabled={disabled}
+          className="w-full h-[56px] rounded-2xl bg-[#111827] text-white text-[16px] font-semibold tracking-[-0.01em] active:scale-[0.98] transition-transform disabled:opacity-25 disabled:cursor-not-allowed"
+        >
+          {label}
+        </button>
+      </div>
     </div>
   );
 }
@@ -274,12 +276,14 @@ function Step2() {
 
       <Field label="전화번호">
         <div className="flex gap-2">
-          <TextInput
-            value={phone}
-            onChange={(v) => { setPhone(v); setError(""); }}
-            placeholder="010-0000-0000"
-            type="tel"
-          />
+          <div className="flex-1 min-w-0">
+            <TextInput
+              value={phone}
+              onChange={(v) => { setPhone(v); setError(""); }}
+              placeholder="010-0000-0000"
+              type="tel"
+            />
+          </div>
           <button
             type="button"
             onClick={sendCode}
@@ -289,6 +293,7 @@ function Step2() {
             {loading && !codeSent ? "발송 중..." : codeSent ? "발송됨" : "인증번호 받기"}
           </button>
         </div>
+
         {error && !codeSent && <p className="text-xs text-[#DC2626] mt-1">{error}</p>}
       </Field>
 
@@ -322,7 +327,7 @@ function Step2() {
 
 function Step3() {
   const router = useRouter();
-  const { name, setName, gender, setGender, birthYear, setBirthYear, birthMonth, setBirthMonth, birthDay, setBirthDay } =
+  const { realName, setRealName, name, setName, gender, setGender, birthYear, setBirthYear, birthMonth, setBirthMonth, birthDay, setBirthDay } =
     useOnboardingStore();
 
   const years = Array.from({ length: 2006 - 1970 + 1 }, (_, i) => String(1970 + i));
@@ -336,8 +341,12 @@ function Step3() {
         <p className="text-sm text-[#6B7280] mt-1">이름과 성별을 알려주세요</p>
       </div>
 
-      <Field label="이름">
-        <TextInput value={name} onChange={setName} placeholder="실명 입력" />
+      <Field label="실명" hint="운영팀만 확인합니다">
+        <TextInput value={realName} onChange={setRealName} placeholder="실명 입력" />
+      </Field>
+
+      <Field label="닉네임" hint="상대방이 보게 되는 이름이에요">
+        <TextInput value={name} onChange={setName} placeholder="닉네임 입력" />
       </Field>
 
       <Field label="성별">
@@ -355,7 +364,7 @@ function Step3() {
         </div>
       </Field>
 
-      <ContinueButton onClick={() => router.push("/onboarding/4")} disabled={!name || !gender} />
+      <ContinueButton onClick={() => router.push("/onboarding/4")} disabled={!realName || !name || !gender} />
     </div>
   );
 }
@@ -710,6 +719,7 @@ function Step9() {
       await createProfile({
         id: user.id,
         name: store.name,
+        real_name: store.realName,
         phone: store.phone.replace(/[-\s]/g, ""),
         gender: store.gender,
         birth_year: store.birthYear,

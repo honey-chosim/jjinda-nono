@@ -1,10 +1,12 @@
 "use client";
 
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface OnboardingState {
   phone: string;
   inviteCode: string;
+  realName: string;
   name: string;
   gender: "male" | "female" | "";
   birthYear: number;
@@ -32,6 +34,7 @@ interface OnboardingState {
 
   setPhone: (phone: string) => void;
   setInviteCode: (code: string) => void;
+  setRealName: (realName: string) => void;
   setName: (name: string) => void;
   setGender: (gender: "male" | "female") => void;
   setBirthYear: (year: number) => void;
@@ -59,9 +62,12 @@ interface OnboardingState {
   removePhoto: (index: number) => void;
 }
 
-export const useOnboardingStore = create<OnboardingState>((set) => ({
+export const useOnboardingStore = create<OnboardingState>()(
+  persist(
+    (set) => ({
   phone: "",
   inviteCode: "",
+  realName: "",
   name: "",
   gender: "",
   birthYear: 1995,
@@ -89,6 +95,7 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
 
   setPhone: (phone) => set({ phone }),
   setInviteCode: (inviteCode) => set({ inviteCode }),
+  setRealName: (realName) => set({ realName }),
   setName: (name) => set({ name }),
   setGender: (gender) => set({ gender }),
   setBirthYear: (birthYear) => set({ birthYear }),
@@ -132,4 +139,7 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
     set((state) => ({
       photos: state.photos.filter((_, i) => i !== index),
     })),
-}));
+    }),
+    { name: "jjinda-onboarding" }
+  )
+);

@@ -20,9 +20,9 @@ export default function OnboardingLayout({ children }: { children: React.ReactNo
   }
 
   return (
-    <div className="min-h-dvh flex flex-col bg-white">
+    <div className="min-h-dvh flex flex-col bg-white items-center">
       {/* Progress bar */}
-      <div className="h-[2px] bg-[#F3F4F6] flex-shrink-0">
+      <div className="w-full h-[2px] bg-[#F3F4F6] flex-shrink-0">
         <div
           className="h-full bg-[#111827] transition-all duration-400 ease-out"
           style={{ width: `${progress}%` }}
@@ -30,7 +30,7 @@ export default function OnboardingLayout({ children }: { children: React.ReactNo
       </div>
 
       {/* Top bar */}
-      <div className="flex items-center justify-between px-5 pt-5 pb-2 flex-shrink-0">
+      <div className="w-full max-w-lg flex items-center justify-between px-5 pt-5 pb-2 flex-shrink-0">
         <button
           onClick={handleBack}
           className="w-9 h-9 flex items-center justify-center rounded-full bg-[#F3F4F6] active:scale-95 transition-transform"
@@ -47,7 +47,7 @@ export default function OnboardingLayout({ children }: { children: React.ReactNo
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto">{children}</div>
+      <div className="flex-1 overflow-y-auto w-full max-w-lg">{children}</div>
     </div>
   );
 }

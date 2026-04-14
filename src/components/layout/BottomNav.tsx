@@ -93,7 +93,7 @@ export default function BottomNav() {
             >
               <span className="relative">
                 <Icon active={active} />
-                {badge && badge > 0 && (
+                {badge > 0 && (
                   <span className="absolute -top-1 -right-1.5 min-w-[16px] h-4 bg-[#DC2626] text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1">
                     {badge}
                   </span>

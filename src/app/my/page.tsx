@@ -69,9 +69,8 @@ export default function MyPage() {
   return (
     <div className="min-h-dvh bg-white pb-28">
       <div
-        className="fixed top-0 left-0 right-0 z-30 px-5 pb-4"
+        className="sticky top-0 z-30 px-5 pt-4 pb-4"
         style={{
-          paddingTop: "max(16px, env(safe-area-inset-top))",
           background: "rgba(255,255,255,0.88)",
           backdropFilter: "blur(20px) saturate(180%)",
           WebkitBackdropFilter: "blur(20px) saturate(180%)",
@@ -81,7 +80,7 @@ export default function MyPage() {
         <h1 className="text-[28px] font-black text-[#111827] tracking-[-0.03em]">MY</h1>
       </div>
 
-      <div className="px-4 pt-[84px] flex flex-col gap-4">
+      <div className="px-4 pt-4 flex flex-col gap-4">
         <Card padding="none" className="overflow-hidden">
           <div className="flex items-center gap-4 p-5">
             <div className="relative w-20 h-20 rounded-2xl overflow-hidden flex-shrink-0 bg-gray-100">
@@ -173,7 +172,7 @@ export default function MyPage() {
                         {statusLabel[req.status]}
                       </span>
                       {req.status === "accepted" && (
-                        <Link href={`/match/${req.id}`} className="text-xs text-[var(--primary)] font-medium">
+                        <Link href={`/profiles/${req.target_id}`} className="text-xs text-[var(--primary)] font-medium">
                           보기 →
                         </Link>
                       )}

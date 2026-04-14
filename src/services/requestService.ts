@@ -86,11 +86,11 @@ export async function acceptRequest(requestId: string, targetId: string): Promis
   const req = request as DatingRequest
   const { error: matchError } = await supabase
     .from('matches')
-    .insert({
+    .upsert({
       request_id: requestId,
       user1_id: req.requester_id,
       user2_id: req.target_id,
-    })
+    }, { onConflict: 'request_id', ignoreDuplicates: true })
 
   if (matchError) throw matchError
 }
@@ -104,6 +104,18 @@ export async function rejectRequest(requestId: string, targetId: string): Promis
     .eq('target_id', targetId)
 
   if (error) throw error
+}
+
+export async function getAcceptedRequestId(requesterId: string, targetId: string): Promise<string | null> {
+  const supabase = getRawSupabaseClient()
+  const { data } = await supabase
+    .from('dating_requests')
+    .select('id')
+    .eq('requester_id', requesterId)
+    .eq('target_id', targetId)
+    .eq('status', 'accepted')
+    .maybeSingle()
+  return data?.id ?? null
 }
 
 export async function hasRequested(requesterId: string, targetId: string): Promise<boolean> {

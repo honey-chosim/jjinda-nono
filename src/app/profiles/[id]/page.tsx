@@ -6,7 +6,7 @@ import Link from "next/link";
 import PhotoSwiper from "@/components/profiles/PhotoSwiper";
 import Modal from "@/components/ui/Modal";
 import { getProfileById } from "@/services/profileService";
-import { sendDatingRequest, hasUsedRequestToday, hasRequested } from "@/services/requestService";
+import { sendDatingRequest, hasUsedRequestToday, hasRequested, getAcceptedRequestId } from "@/services/requestService";
 import { getSupabaseClient } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
 import type { ProfileView } from "@/types/database";
@@ -25,6 +25,7 @@ export default function ProfileDetailPage({
   const [usedToday, setUsedToday] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [acceptedRequestId, setAcceptedRequestId] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -34,14 +35,16 @@ export default function ProfileDetailPage({
         if (!user) return;
         setCurrentUserId(user.id);
 
-        const [profileData, usedTodayData, alreadyRequested] = await Promise.all([
+        const [profileData, usedTodayData, alreadyRequested, acceptedId] = await Promise.all([
           getProfileById(id),
           hasUsedRequestToday(user.id),
           hasRequested(user.id, id),
+          getAcceptedRequestId(user.id, id),
         ]);
         setProfile(profileData);
         setUsedToday(usedTodayData);
         setRequested(alreadyRequested);
+        setAcceptedRequestId(acceptedId);
       } catch (err) {
         console.error("Failed to fetch profile:", err);
       } finally {
@@ -181,7 +184,14 @@ export default function ProfileDetailPage({
       )}
 
       <div className="fixed bottom-0 left-0 right-0 px-5 py-4 pb-safe" style={{background:"rgba(255,255,255,0.92)",backdropFilter:"blur(20px) saturate(180%)",WebkitBackdropFilter:"blur(20px) saturate(180%)",borderTop:"0.5px solid rgba(0,0,0,0.1)"}}>
-        {usedToday || alreadyRequested ? (
+        {acceptedRequestId ? (
+          <button
+            onClick={() => router.push(`/match/${acceptedRequestId}`)}
+            className="w-full h-14 rounded-2xl bg-[var(--primary)] text-white text-base font-semibold hover:bg-[#1F2937] active:scale-[0.98] transition-all shadow-sm"
+          >
+            결제 페이지로 이동
+          </button>
+        ) : usedToday || alreadyRequested ? (
           <div className="flex items-center justify-center gap-2 w-full h-14 rounded-2xl bg-gray-100 text-[var(--text-muted)]">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />

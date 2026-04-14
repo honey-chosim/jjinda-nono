@@ -59,9 +59,8 @@ export default function ProfilesPage() {
   return (
     <div className="min-h-dvh bg-white pb-24">
       <div
-        className="fixed top-0 left-0 right-0 z-30 px-5 pb-4"
+        className="sticky top-0 z-30 px-5 pt-4 pb-4"
         style={{
-          paddingTop: "max(16px, env(safe-area-inset-top))",
           background: "rgba(255,255,255,0.92)",
           backdropFilter: "blur(20px) saturate(180%)",
           WebkitBackdropFilter: "blur(20px) saturate(180%)",
@@ -71,7 +70,7 @@ export default function ProfilesPage() {
         <h1 className="text-[28px] font-black text-[#111827] tracking-[-0.03em]">탐색</h1>
       </div>
 
-      <div className="px-4 pt-[84px]">
+      <div className="px-4 pt-4">
         {isFetching ? (
           <div className="flex justify-center py-32">
             <div className="w-6 h-6 border-2 border-[#E5E7EB] border-t-[#111827] rounded-full animate-spin" />
