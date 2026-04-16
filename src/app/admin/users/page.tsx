@@ -1,0 +1,141 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import type { Profile } from '@/types/database'
+
+function getAge(birthYear: number, birthMonth: number, birthDay: number): number {
+  const today = new Date()
+  const birth = new Date(birthYear, birthMonth - 1, birthDay)
+  let age = today.getFullYear() - birth.getFullYear()
+  const m = today.getMonth() - birth.getMonth()
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--
+  return age
+}
+
+export default function AdminUsersPage() {
+  const [users, setUsers] = useState<Profile[]>([])
+  const [loading, setLoading] = useState(true)
+  const [toggling, setToggling] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch('/api/admin/users')
+      .then((r) => r.json())
+      .then((data) => {
+        if (Array.isArray(data)) setUsers(data)
+      })
+      .finally(() => setLoading(false))
+  }, [])
+
+  async function toggleActive(user: Profile) {
+    setToggling(user.id)
+    try {
+      const res = await fetch(`/api/admin/users/${user.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_active: !user.is_active }),
+      })
+      if (res.ok) {
+        const updated = await res.json()
+        setUsers((prev) => prev.map((u) => (u.id === user.id ? updated : u)))
+      }
+    } finally {
+      setToggling(null)
+    }
+  }
+
+  return (
+    <div>
+      <h2 className="text-xl font-bold text-gray-900 mb-6">유저 관리</h2>
+
+      {loading ? (
+        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-400">
+          불러오는 중...
+        </div>
+      ) : (
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-200 bg-gray-50">
+                  <th className="text-left px-4 py-3 font-medium text-gray-600">실명</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-600">전화번호</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-600">성별</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-600">나이</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-600">거주지</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-600">가입일</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-600">온보딩</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-600">상태</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-600">액션</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((user) => (
+                  <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="px-4 py-3 font-medium text-gray-900">{user.name}</td>
+                    <td className="px-4 py-3 text-gray-600">{user.phone ?? '-'}</td>
+                    <td className="px-4 py-3 text-gray-600">
+                      {user.gender === 'male' ? '남' : '여'}
+                    </td>
+                    <td className="px-4 py-3 text-gray-600">
+                      {getAge(user.birth_year, user.birth_month, user.birth_day)}세
+                    </td>
+                    <td className="px-4 py-3 text-gray-600">
+                      {user.residence_city
+                        ? `${user.residence_city} ${user.residence_district ?? ''}`.trim()
+                        : '-'}
+                    </td>
+                    <td className="px-4 py-3 text-gray-500">
+                      {new Date(user.created_at).toLocaleDateString('ko-KR')}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${
+                          user.onboarding_completed
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-gray-100 text-gray-500'
+                        }`}
+                      >
+                        {user.onboarding_completed ? '완료' : '미완료'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${
+                          user.is_active
+                            ? 'bg-blue-100 text-blue-700'
+                            : 'bg-red-100 text-red-600'
+                        }`}
+                      >
+                        {user.is_active ? '활성' : '비활성'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() => toggleActive(user)}
+                        disabled={toggling === user.id}
+                        className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors disabled:opacity-50 ${
+                          user.is_active
+                            ? 'bg-red-50 text-red-600 hover:bg-red-100'
+                            : 'bg-green-50 text-green-700 hover:bg-green-100'
+                        }`}
+                      >
+                        {toggling === user.id ? '...' : user.is_active ? '비활성화' : '활성화'}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {users.length === 0 && (
+                  <tr>
+                    <td colSpan={9} className="px-4 py-8 text-center text-gray-400">
+                      유저가 없습니다.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
