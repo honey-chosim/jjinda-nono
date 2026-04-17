@@ -60,7 +60,7 @@ export default function MatchPage({
 
   // Determine the other person's name
   const matchName = match
-    ? (match.user1_id === currentUserId ? match.user2.name : match.user1.name)
+    ? (match.user1_id === currentUserId ? (match.user2?.name ?? "상대방") : (match.user1?.name ?? "상대방"))
     : "상대방";
 
   return (

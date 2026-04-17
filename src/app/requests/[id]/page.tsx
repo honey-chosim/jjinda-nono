@@ -90,6 +90,18 @@ export default function RequestDetailPage({
   }
 
   const requester = request.requester;
+  if (!requester) {
+    return (
+      <div className="min-h-dvh flex items-center justify-center bg-[var(--bg)]">
+        <div className="text-center">
+          <p className="text-[var(--text-muted)]">프로필을 불러올 수 없습니다</p>
+          <Link href="/requests" className="mt-4 inline-block text-sm text-[var(--primary)]">
+            목록으로 돌아가기
+          </Link>
+        </div>
+      </div>
+    );
+  }
   const currentYear = new Date().getFullYear();
   const requesterAge = currentYear - requester.birth_year + 1;
   const requesterResidence = requester.residence_district

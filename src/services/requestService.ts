@@ -67,7 +67,7 @@ export async function getReceivedRequests(userId: string): Promise<RequestWithRe
     .order('created_at', { ascending: false })
 
   if (error) throw error
-  return (data ?? []) as RequestWithRequester[]
+  return ((data ?? []) as RequestWithRequester[]).filter((r) => r.requester != null)
 }
 
 export async function acceptRequest(requestId: string, targetId: string): Promise<void> {
