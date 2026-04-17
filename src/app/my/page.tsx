@@ -24,10 +24,15 @@ const statusColor: Record<string, string> = {
   expired: "bg-gray-100 text-gray-400",
 };
 
+type InviteCodeRow = { id: string; code: string; used_by: string | null; is_active: boolean; created_at: string };
+
 export default function MyPage() {
   const [profile, setProfile] = useState<ProfileView | null>(null);
   const [sentRequests, setSentRequests] = useState<DatingRequest[]>([]);
   const [isFetching, setIsFetching] = useState(true);
+  const [inviteCodes, setInviteCodes] = useState<InviteCodeRow[]>([]);
+  const [generatingCode, setGeneratingCode] = useState(false);
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -35,12 +40,14 @@ export default function MyPage() {
         const supabase = getSupabaseClient();
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
-        const [profileData, requestsData] = await Promise.all([
+        const [profileData, requestsData, codesRes] = await Promise.all([
           getMyProfile(user.id),
           getSentRequests(user.id),
+          fetch('/api/invite-codes/my'),
         ]);
         setProfile(profileData);
         setSentRequests(requestsData);
+        if (codesRes.ok) setInviteCodes(await codesRes.json());
       } catch (err) {
         console.error("Failed to fetch my data:", err);
       } finally {
@@ -49,6 +56,25 @@ export default function MyPage() {
     }
     fetchData();
   }, []);
+
+  async function generateCode() {
+    setGeneratingCode(true);
+    try {
+      const res = await fetch('/api/invite-codes/my', { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) { alert(data.error); return; }
+      setInviteCodes((prev) => [data, ...prev]);
+    } finally {
+      setGeneratingCode(false);
+    }
+  }
+
+  function copyCode(code: string) {
+    navigator.clipboard.writeText(code).then(() => {
+      setCopiedCode(code);
+      setTimeout(() => setCopiedCode(null), 2000);
+    });
+  }
 
   if (isFetching) {
     return (
@@ -143,6 +169,50 @@ export default function MyPage() {
             </Link>
           </div>
         </Card>
+
+        {/* 내 초대코드 */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-base font-bold text-[var(--text)]">내 초대코드</h2>
+            <button
+              onClick={generateCode}
+              disabled={generatingCode}
+              className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-[#111827] text-white disabled:opacity-40 active:scale-95 transition-all"
+            >
+              {generatingCode ? "생성 중..." : "+ 코드 발급"}
+            </button>
+          </div>
+          {inviteCodes.length === 0 ? (
+            <Card>
+              <div className="py-6 text-center">
+                <p className="text-sm text-[var(--text-muted)]">지인에게 초대코드를 발급해보세요</p>
+              </div>
+            </Card>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {inviteCodes.map((c) => (
+                <Card key={c.id} padding="sm">
+                  <div className="flex items-center justify-between gap-3 px-2 py-1">
+                    <div>
+                      <p className="text-sm font-mono font-bold tracking-[0.15em] text-[#111827]">{c.code}</p>
+                      <p className="text-xs text-[var(--text-muted)] mt-0.5">
+                        {c.used_by ? "사용됨" : "미사용"} · {new Date(c.created_at).toLocaleDateString("ko-KR", { month: "long", day: "numeric" })}
+                      </p>
+                    </div>
+                    {!c.used_by && (
+                      <button
+                        onClick={() => copyCode(c.code)}
+                        className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-[#F3F4F6] text-[#111827] active:scale-95 transition-all"
+                      >
+                        {copiedCode === c.code ? "복사됨!" : "복사"}
+                      </button>
+                    )}
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
 
         <div>
           <h2 className="text-base font-bold text-[var(--text)] mb-3">보낸 요청</h2>
