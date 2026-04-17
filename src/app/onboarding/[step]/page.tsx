@@ -582,6 +582,28 @@ function Step7() {
   );
 }
 
+async function compressImage(file: File, maxPx = 1200, quality = 0.85): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let { width, height } = img;
+      if (width > maxPx || height > maxPx) {
+        if (width > height) { height = Math.round((height / width) * maxPx); width = maxPx; }
+        else { width = Math.round((width / height) * maxPx); height = maxPx; }
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      canvas.getContext("2d")!.drawImage(img, 0, 0, width, height);
+      canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("압축 실패")), "image/jpeg", quality);
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
 function Step8() {
   const router = useRouter();
   const { photos, addPhoto, removePhoto } = useOnboardingStore();
@@ -603,12 +625,12 @@ function Step8() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("로그인이 필요합니다");
 
-      const ext = file.name.split(".").pop() ?? "jpg";
-      const path = `${user.id}/${Date.now()}.${ext}`;
+      const compressed = await compressImage(file);
+      const path = `${user.id}/${Date.now()}.jpg`;
 
       const { error: uploadErr } = await supabase.storage
         .from("profile-photos")
-        .upload(path, file, { upsert: false });
+        .upload(path, compressed, { contentType: "image/jpeg", upsert: false });
 
       if (uploadErr) throw uploadErr;
 
