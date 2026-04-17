@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-const PUBLIC_PATHS = ['/', '/onboarding']
+const PUBLIC_PATHS = ['/', '/onboarding', '/login']
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -44,5 +44,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/profiles/:path*', '/requests/:path*', '/match/:path*', '/my'],
+  matcher: ['/profiles/:path*', '/requests/:path*', '/match/:path*', '/my', '/my/:path*'],
 }

@@ -16,8 +16,8 @@ export default function LandingPage() {
   useEffect(() => {
     async function checkSession() {
       const supabase = getSupabaseClient();
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) router.replace("/profiles");
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) router.replace("/profiles");
     }
     checkSession();
   }, [router]);
