@@ -9,6 +9,7 @@ interface RequestCardProps {
 
 export default function RequestCard({ request }: RequestCardProps) {
   const requester = request.requester;
+  if (!requester) return null;
   const currentYear = new Date().getFullYear();
   const age = currentYear - requester.birth_year + 1;
   const residence = requester.residence_district
